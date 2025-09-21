@@ -4,6 +4,17 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 
+# OS / editor / env
+.DS_Store
+.vscode/
+.idea/
+.venv/
+
+# Logs
+*.log
+logs/
+app.log
+
 ### STS ###
 .apt_generated
 .classpath
@@ -30,4 +41,4 @@ build/
 !**/src/test/**/build/
 
 ### VS Code ###
-.vscode/
+# moved to top section
