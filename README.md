@@ -8,7 +8,7 @@ A comprehensive backend system for managing a smart health clinic with dual data
 - **Java**: 21 (LTS)
 - **Spring Boot**: 3.5.6
 - **Databases**: MySQL (clinic_db) + MongoDB (prescriptionsdb)
-- **Security**: Spring Security (Initially Disabled)
+- **Security**: Spring Security with JWT (stateless)
 - **Documentation**: OpenAPI/Swagger
 - **Build Tool**: Maven
 
@@ -45,9 +45,9 @@ com.smartclinic/
 
 ## 🚀 API Endpoints
 
-### Authentication (Security Disabled)
+### Authentication (JWT)
 - `POST /api/auth/register` - Register new user (ADMIN/DOCTOR/PATIENT)
-- `POST /api/auth/login` - Login (returns dummy token)
+- `POST /api/auth/login` - Login (returns JWT)
 
 ### Appointment Management
 - `POST /api/appointments` - Book new appointment
@@ -100,11 +100,10 @@ CREATE DATABASE clinic_db;
    ```
 
 4. **Access Swagger UI** (when running):
-   ```
-   http://localhost:8080/swagger-ui.html
-   ```
+    - OpenAPI JSON: http://localhost:8080/v3/api-docs
+    - Swagger UI: http://localhost:8080/swagger-ui/index.html
 
-## 🧪 Testing Workflow (Without Security)
+## 🧪 Testing Workflow (with JWT)
 
 ### 1. Register Users
 ```bash
@@ -138,6 +137,12 @@ POST /api/auth/login
 }
 ```
 
+The login response includes a `token` field. Use it as a Bearer token for protected endpoints:
+
+```
+Authorization: Bearer <TOKEN>
+```
+
 ### 3. Book Appointment
 ```bash
 POST /api/appointments
@@ -167,15 +172,12 @@ POST /api/prescriptions
 }
 ```
 
-## 🔐 Security (Future Implementation)
+## 🔐 Security
 
-Currently, security is **disabled** for development and testing. Future implementation will include:
-
-- JWT-based authentication
-- Role-based authorization:
-  - **ADMIN**: Manage users and system settings
-  - **DOCTOR**: Manage prescriptions and appointments
-  - **PATIENT**: View appointments and medical history
+Security is enabled using stateless JWT authentication. Access rules:
+- `/api/auth/**`, `/v3/api-docs/**`, `/swagger-ui/**` are publicly accessible
+- Appointments: role-based (`DOCTOR`/`PATIENT`) via `@PreAuthorize`
+- Prescriptions and Medical History: protected; `DOCTOR` creates, `PATIENT` reads
 
 ## 📝 API Response Format
 
@@ -212,7 +214,7 @@ All APIs return a standard response format:
 
 - **Health Check**: `/actuator/health`
 - **Application Info**: `/actuator/info`
-- **Swagger Documentation**: `/swagger-ui.html`
+- **Swagger Documentation**: `/swagger-ui/index.html`
 
 ---
 
